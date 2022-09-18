@@ -22,8 +22,8 @@ let dark = L.tileLayer(
 
 // Create a base layer that holds both maps.
 let baseMaps = {
-  Street: light,
-  Dark: dark,
+  "Day Navigation": light,
+  "Night Navigation": dark,
 };
 
 // Create the map object with center, zoom level and default layer.
@@ -37,9 +37,22 @@ let map = L.map("mapid", {
 L.control.layers(baseMaps).addTo(map);
 
 // Accessing the airport GeoJSON URL
-let torontoData = "/torontoRoutes.json";
+let torontoData =
+  "https://raw.githubusercontent.com/RVP97/Mapping_Earthquakes/Mapping_GeoJSON_Linestrings/torontoRoutes.json";
+
+// Create a style for the lines.
+let myStyle = {
+  color: "#ffffa1",
+  weight: 2,
+};
 
 d3.json(torontoData).then((data) => {
   console.log(data);
-  L.geoJSON(data).addTo(map);
+  L.geoJSON(data, {
+    style: myStyle,
+    onEachFeature: (feature, layer) =>
+      layer.bindPopup(
+        `<h5>Airline: ${feature.properties.airline}<br><hr>Destination: ${feature.properties.dst}</h5>`
+      ),
+  }).addTo(map);
 });
